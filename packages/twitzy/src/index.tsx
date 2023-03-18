@@ -45,10 +45,22 @@ const TwitzyProvider = ({ children }: { children: React.ReactNode }) => {
  * Twitzy
  * ----------------------------------------------------------------------------------------------*/
 
-const Twitzy = () => {
-	return (
-		<TwitzyProvider>
-			<div></div>
-		</TwitzyProvider>
-	);
+const Twitzy = ({ children }: { children: React.ReactNode }) => {
+	return <TwitzyProvider>{children}</TwitzyProvider>;
 };
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyAvatar
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyAvatarProps = React.ImgHTMLAttributes<HTMLImageElement>;
+
+type TwitzyAvatarElement = HTMLImageElement;
+
+const TwitzyAvatar = React.forwardRef<TwitzyAvatarElement, TwitzyAvatarProps>(
+	(props, forwardedRef) => {
+		return <img ref={forwardedRef} {...props} />;
+	}
+);
+
+TwitzyAvatar.displayName = 'TwitzyAvatar';
