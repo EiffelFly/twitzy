@@ -1,3 +1,3 @@
 # Twitzy
 
-Twitzy is an unstyled twitter thread React component.
+Twitzy is an unstyled Twitter thread React component.
