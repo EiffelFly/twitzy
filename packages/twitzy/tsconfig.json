@@ -4,5 +4,5 @@
     "outDir": "dist"
   },
   "include": ["**/*.ts", "**/*.tsx"],
-  "exclude": ["./testRunner.ts"]
+  "exclude": []
 }
