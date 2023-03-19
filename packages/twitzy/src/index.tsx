@@ -96,14 +96,17 @@ type TwitzyAvatar = {
 
 const TwitzyAvatar = (props: TwitzyAvatar) => {
 	const { children } = props;
-	<TwitzyAvatarProvider>{children}</TwitzyAvatarProvider>;
+	return <TwitzyAvatarProvider>{children}</TwitzyAvatarProvider>;
 };
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyAvatarImage
  * ----------------------------------------------------------------------------------------------*/
 
-type TwitzyAvatarImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
+type TwitzyAvatarImageProps = React.ImgHTMLAttributes<HTMLImageElement> & {
+	src: string;
+	alt: string;
+};
 
 type TwitzyAvatarImageElement = HTMLImageElement;
 
@@ -163,20 +166,20 @@ function useAvatarLoadingStatus(src?: string) {
 }
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyAvatarFallback
+ * TwitzyAvatarGradientFallback
  * ----------------------------------------------------------------------------------------------*/
 
 /* Credit: https://github.com/vercel/avatar */
 
-function generateGradient(username: string) {
-	function djb2(str: string) {
-		let hash = 5381;
-		for (let i = 0; i < str.length; i++) {
-			hash = (hash << 5) + hash + str.charCodeAt(i);
-		}
-		return hash;
+function djb2(str: string) {
+	let hash = 5381;
+	for (let i = 0; i < str.length; i++) {
+		hash = (hash << 5) + hash + str.charCodeAt(i);
 	}
+	return hash;
+}
 
+function generateGradient(username: string) {
 	const c1 = color({ h: djb2(username) % 360, s: 0.95, l: 0.5 });
 	const second = c1.triad()[1].toHexString();
 
@@ -186,21 +189,21 @@ function generateGradient(username: string) {
 	};
 }
 
-type TwitzyAvatarFallbackProps = {
+type TwitzyAvatarGradientFallbackProps = React.ImgHTMLAttributes<SVGSVGElement> & {
 	size: number;
-	author: string;
+	authorName: string;
 };
 
-type TwitzyAvatarFallbackElement = SVGSVGElement;
+type TwitzyAvatarGradientFallbackElement = SVGSVGElement;
 
-const TwitzyAvatarFallback = React.forwardRef<
-	TwitzyAvatarFallbackElement,
-	TwitzyAvatarFallbackProps
+const TwitzyAvatarGradientFallback = React.forwardRef<
+	TwitzyAvatarGradientFallbackElement,
+	TwitzyAvatarGradientFallbackProps
 >((props, forwardedRef) => {
-	const { size, author } = props;
+	const { size, authorName, ...passThrough } = props;
 
 	const context = useTwitzyAvatarContext();
-	const gradient = generateGradient(author);
+	const gradientColor = generateGradient(authorName);
 
 	return context.avatarLoadingStatus !== 'loaded' ? (
 		<svg
@@ -210,21 +213,23 @@ const TwitzyAvatarFallback = React.forwardRef<
 			version="1.1"
 			xmlns="http://www.w3.org/2000/svg"
 			ref={forwardedRef}
+			{...passThrough}
 		>
 			<g>
 				<defs>
-					<linearGradient id="gradient" x1="0" y1="0" x2="1" y2="1">
-						<stop offset="0%" stopColor={gradient.fromColor} />
-						<stop offset="100%" stopColor={gradient.toColor} />
+					<linearGradient id={`${authorName}`} x1="0" y1="0" x2="1" y2="1">
+						<stop offset="0%" stopColor={gradientColor.fromColor} />
+						<stop offset="100%" stopColor={gradientColor.toColor} />
 					</linearGradient>
 				</defs>
-				<circle fill="url(#gradient)" x="0" y="0" width={size} height={size} />
+				<rect fill={`url(#${authorName})`} x="0" y="0" width={size} height={size} />
+				{/* <circle fill="url(#gradient)" cx={`${size / 2}`} cy={`${size / 2}`} r={`${size / 2}`} /> */}
 			</g>
 		</svg>
 	) : null;
 });
 
-TwitzyAvatarFallback.displayName = 'TwitzyAvatarFallback';
+TwitzyAvatarGradientFallback.displayName = 'TwitzyAvatarGradientFallback';
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyAvatarTimeStamp
@@ -270,4 +275,4 @@ TwitzyAvatarFallback.displayName = 'TwitzyAvatarFallback';
  * TwitzyAuthor
  * ----------------------------------------------------------------------------------------------*/
 
-export { Twitzy, TwitzyAvatar, TwitzyAvatarImage, TwitzyAvatarFallback };
+export { Twitzy, TwitzyAvatar, TwitzyAvatarImage, TwitzyAvatarGradientFallback };
