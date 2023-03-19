@@ -118,7 +118,7 @@ const TwitzyAvatarImage = React.forwardRef<TwitzyAvatarImageElement, TwitzyAvata
 			if (context.onAvatarLoadingStatusChange) {
 				context.onAvatarLoadingStatusChange(avatarLoadingStatus);
 			}
-		}, [avatarLoadingStatus]);
+		}, [avatarLoadingStatus, context]);
 
 		return avatarLoadingStatus === 'loaded' ? (
 			<img src={src} alt={alt} ref={forwardedRef} {...passThrough} />

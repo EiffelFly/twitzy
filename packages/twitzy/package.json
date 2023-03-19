@@ -6,6 +6,7 @@
   "devDependencies": {
     "@types/react": "^18.0.28",
     "@types/tinycolor2": "^1.4.3",
+    "eslint-config-twitzy": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tsup": "^6.6.3",
@@ -17,6 +18,7 @@
   },
   "scripts": {
     "dev": "tsup src/index.tsx --watch",
+    "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
     "build": "tsup src/index.tsx"
   },
   "dependencies": {
