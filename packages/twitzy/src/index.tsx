@@ -232,6 +232,33 @@ const TwitzyAvatarGradientFallback = React.forwardRef<
 TwitzyAvatarGradientFallback.displayName = 'TwitzyAvatarGradientFallback';
 
 /* ------------------------------------------------------------------------------------------------
+ * TwitzyAvatarFallback
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyAvatarFallbackProps = React.ImgHTMLAttributes<HTMLDivElement> & {
+	children?: React.ReactNode;
+};
+
+type TwitzyAvatarFallbackElement = HTMLDivElement;
+
+const TwitzyAvatarFallback = React.forwardRef<
+	TwitzyAvatarFallbackElement,
+	TwitzyAvatarFallbackProps
+>((props, forwardedRef) => {
+	const { children, ...passThrough } = props;
+
+	const context = useTwitzyAvatarContext();
+
+	return context.avatarLoadingStatus !== 'loaded' ? (
+		<div ref={forwardedRef} {...passThrough}>
+			{children}
+		</div>
+	) : null;
+});
+
+TwitzyAvatarFallback.displayName = 'TwitzyAvatarFallback';
+
+/* ------------------------------------------------------------------------------------------------
  * TwitzyAvatarTimeStamp
  * ----------------------------------------------------------------------------------------------*/
 
@@ -275,4 +302,10 @@ TwitzyAvatarGradientFallback.displayName = 'TwitzyAvatarGradientFallback';
  * TwitzyAuthor
  * ----------------------------------------------------------------------------------------------*/
 
-export { Twitzy, TwitzyAvatar, TwitzyAvatarImage, TwitzyAvatarGradientFallback };
+export {
+	Twitzy,
+	TwitzyAvatar,
+	TwitzyAvatarImage,
+	TwitzyAvatarFallback,
+	TwitzyAvatarGradientFallback,
+};
