@@ -16,18 +16,17 @@
     "react-dom": "^18.2.0",
     "rimraf": "^4.4.0",
     "tsup": "^6.6.3",
-    "typescript": "^4.7.4"
+    "typescript": "^4.7.4",
+    "tinycolor2": "^1.6.0"
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "tinycolor2": "^1.6.0"
   },
   "scripts": {
-    "dev": "tsup src/index.tsx --watch",
+    "dev": "pnpm rimraf dist && tsup src/index.tsx --watch",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
     "build": "pnpm rimraf dist && tsup src/index.tsx"
-  },
-  "dependencies": {
-    "tinycolor2": "^1.6.0"
   }
 }
