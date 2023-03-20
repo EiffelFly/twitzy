@@ -321,9 +321,26 @@ const TwitzyTimeStamp = React.forwardRef<TwitzyTimeStampElement, TwitzyTimeStamp
 );
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyTimeStamp
+ * TwitzyToolBar
  * ----------------------------------------------------------------------------------------------*/
 
+type TwitzyToolbarProps = React.HTMLAttributes<HTMLDivElement> & {
+	children: React.ReactNode;
+};
+
+type TwitzyToolbarElement = HTMLDivElement;
+
+const TwitzyToolbar = React.forwardRef<TwitzyToolbarElement, TwitzyToolbarProps>(
+	(props, forwardedRef) => {
+		const { children, ...passThrough } = props;
+
+		return (
+			<div ref={forwardedRef} {...passThrough}>
+				{children}
+			</div>
+		);
+	}
+);
 /* ------------------------------------------------------------------------------------------------
  * TwitzyLove
  * ----------------------------------------------------------------------------------------------*/
@@ -367,4 +384,5 @@ export {
 	TwitzyAvatarFallback,
 	TwitzyAvatarGradientFallback,
 	TwitzyTimeStamp,
+	TwitzyToolbar,
 };
