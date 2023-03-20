@@ -4,19 +4,11 @@ import {
 	TwitzyAvatarGradientFallback,
 	TwitzyAvatarImage,
 } from 'twitzy';
+import { Root } from '../components/Root';
 
 export const TwitzyAvatarPage = () => {
 	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				gap: '16px',
-				alignItems: 'center',
-				justifyContent: 'center',
-				height: '100vh',
-			}}
-		>
+		<Root>
 			<TwitzyAvatar>
 				<TwitzyAvatarImage
 					src="https://pbs.twimg.com/profile_images/1261849800627982338/dmunkKd4_400x400.jpg"
@@ -45,7 +37,7 @@ export const TwitzyAvatarPage = () => {
 					}}
 				/>
 			</TwitzyAvatar>
-			{/* <TwitzyAvatar>
+			<TwitzyAvatar>
 				<TwitzyAvatarImage
 					src="https://pbs.twimg.com/profile_images/1261849800627982338/dmunkKd4_400x400.jpg"
 					alt="twitter-profile"
@@ -96,8 +88,8 @@ export const TwitzyAvatarPage = () => {
 				>
 					EF
 				</TwitzyAvatarFallback>
-			</TwitzyAvatar> */}
-		</div>
+			</TwitzyAvatar>
+		</Root>
 	);
 };
 

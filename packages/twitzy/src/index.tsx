@@ -259,8 +259,66 @@ const TwitzyAvatarFallback = React.forwardRef<
 TwitzyAvatarFallback.displayName = 'TwitzyAvatarFallback';
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyAvatarTimeStamp
+ * TwitzyTimeStamp
  * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTimeStampProps = React.TimeHTMLAttributes<HTMLTimeElement> & {
+	time: string;
+};
+
+type TwitzyTimeStampElement = HTMLTimeElement;
+
+const transferMonthNumToName = (month: number) => {
+	switch (month) {
+		case 0:
+			return 'Jan';
+		case 1:
+			return 'Feb';
+		case 2:
+			return 'Mar';
+		case 3:
+			return 'Apr';
+		case 4:
+			return 'May';
+		case 5:
+			return 'Jun';
+		case 6:
+			return 'Jul';
+		case 7:
+			return 'Aug';
+		case 8:
+			return 'Sep';
+		case 9:
+			return 'Oct';
+		case 10:
+			return 'Nov';
+		case 11:
+			return 'Dec';
+		default:
+			throw new Error("Month doesn't exist!");
+	}
+};
+
+const TwitzyTimeStamp = React.forwardRef<TwitzyTimeStampElement, TwitzyTimeStampProps>(
+	(props, forwardedRef) => {
+		const { time, ...passThrough } = props;
+		const Time = new Date(time);
+
+		const [month, day, year] = [Time.getMonth(), Time.getDate(), Time.getFullYear()];
+		const [hour, minute] = [Time.getHours(), Time.getMinutes()];
+
+		return (
+			<time
+				{...passThrough}
+				ref={forwardedRef}
+				title={`Time Posted: ${Time.toUTCString()}`}
+				dateTime={Time.toISOString()}
+			>
+				{`${hour}:${minute} - ${transferMonthNumToName(month)} ${day}, ${year}`}
+			</time>
+		);
+	}
+);
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyTimeStamp
@@ -308,4 +366,5 @@ export {
 	TwitzyAvatarImage,
 	TwitzyAvatarFallback,
 	TwitzyAvatarGradientFallback,
+	TwitzyTimeStamp,
 };
