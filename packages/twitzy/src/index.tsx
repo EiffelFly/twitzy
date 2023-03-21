@@ -335,15 +335,41 @@ const TwitzyToolbar = React.forwardRef<TwitzyToolbarElement, TwitzyToolbarProps>
 		const { children, ...passThrough } = props;
 
 		return (
-			<div ref={forwardedRef} {...passThrough}>
+			<div {...passThrough} ref={forwardedRef}>
 				{children}
 			</div>
 		);
 	}
 );
 /* ------------------------------------------------------------------------------------------------
- * TwitzyLove
+ * TwitzyLike
  * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyLikeProps = React.HTMLAttributes<HTMLAnchorElement> & {
+	children: React.ReactNode;
+	tweetId: string;
+};
+
+type TwitzyLikeElement = HTMLAnchorElement;
+
+const TwitzyLike = React.forwardRef<TwitzyLikeElement, TwitzyLikeProps>((props, forwardedRef) => {
+	const { children, tweetId, ...passThrough } = props;
+
+	const likeUrl = `https://twitter.com/intent/like?tweet_id=${tweetId}`;
+
+	return (
+		<a
+			twitzy-like=""
+			{...passThrough}
+			href={likeUrl}
+			ref={forwardedRef}
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			{children}
+		</a>
+	);
+});
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyReply
@@ -385,4 +411,5 @@ export {
 	TwitzyAvatarGradientFallback,
 	TwitzyTimeStamp,
 	TwitzyToolbar,
+	TwitzyLike,
 };
