@@ -1,4 +1,4 @@
-import { TwitzyLike, TwitzyReply, TwitzyRetweet, TwitzyToolbar } from 'twitzy';
+import { TwitzyCopyLink, TwitzyLike, TwitzyReply, TwitzyRetweet, TwitzyToolbar } from 'twitzy';
 import { Root } from '../components/Root';
 import styles from './toolbar.module.css';
 
@@ -48,6 +48,40 @@ const Toolbar = () => {
 					</svg>
 					<p className={styles.twitzyReplyWord}>Retweet</p>
 				</TwitzyRetweet>
+				<TwitzyCopyLink
+					author="EiffelFly"
+					className={styles.twitzyCopyLink}
+					tweetId={tweetId}
+					render={(copied) => {
+						return (
+							<>
+								{copied ? (
+									<svg
+										className={styles.twitzyCopyLinkIcon}
+										xmlns="http://www.w3.org/2000/svg"
+										width="28"
+										height="28"
+										viewBox="0 0 16 16"
+									>
+										<path d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z" />
+									</svg>
+								) : (
+									<svg
+										className={styles.twitzyCopyLinkIcon}
+										xmlns="http://www.w3.org/2000/svg"
+										width="28"
+										height="28"
+										viewBox="0 0 16 16"
+									>
+										<path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />
+										<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z" />
+									</svg>
+								)}
+								<p className={styles.twitzyCopyLinkWord}>{copied ? 'copied' : 'Copy Link'}</p>
+							</>
+						);
+					}}
+				/>
 			</TwitzyToolbar>
 		</Root>
 	);

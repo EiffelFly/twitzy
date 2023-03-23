@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: row;
   column-gap: 32px;
+  justify-content: flex-start;
 }
 
 .twitzyLike {
@@ -60,4 +61,29 @@
 .twitzyRetweetIcon {
   fill: #43B6EB;
   margin: auto 0;
+}
+
+.twitzyCopyLink {
+  display: flex;
+  text-decoration: none;
+  column-gap: 12px;
+  background: none;
+  border: none;
+  padding: 0;
+  outline: none;
+  cursor: pointer;
+}
+
+.twitzyCopyLinkIcon {
+  fill: #8E9192;
+  margin: auto 0;
+}
+
+.twitzyCopyLinkWord {
+  font-size: 16px;
+  font-family: sans-serif;
+  font-weight: 400;
+	color: lightgray;
+  margin: auto 0;
+  vertical-align: middle;
 }
