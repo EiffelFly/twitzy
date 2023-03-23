@@ -375,6 +375,34 @@ const TwitzyLike = React.forwardRef<TwitzyLikeElement, TwitzyLikeProps>((props, 
  * TwitzyReply
  * ----------------------------------------------------------------------------------------------*/
 
+type TwitzyReplyProps = React.HTMLAttributes<HTMLAnchorElement> & {
+	children: React.ReactNode;
+	tweetId: string;
+};
+
+type TwitzyReplyElement = HTMLAnchorElement;
+
+const TwitzyReply = React.forwardRef<TwitzyReplyElement, TwitzyReplyProps>(
+	(props, forwardedRef) => {
+		const { children, tweetId, ...passThrough } = props;
+
+		const replyUrl = `https://twitter.com/intent/tweet?in_reply_to=${tweetId}`;
+
+		return (
+			<a
+				twitzy-like=""
+				{...passThrough}
+				href={replyUrl}
+				ref={forwardedRef}
+				target="_blank"
+				rel="noopener noreferrer"
+			>
+				{children}
+			</a>
+		);
+	}
+);
+
 /* ------------------------------------------------------------------------------------------------
  * TwitzyRetweet
  * ----------------------------------------------------------------------------------------------*/
@@ -412,4 +440,5 @@ export {
 	TwitzyTimeStamp,
 	TwitzyToolbar,
 	TwitzyLike,
+	TwitzyReply,
 };
