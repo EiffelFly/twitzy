@@ -1,0 +1,63 @@
+
+
+.Root {
+  background-color: #191C1D;
+}
+
+.twitzyToolbar {
+  display: flex;
+  flex-direction: row;
+  column-gap: 32px;
+}
+
+.twitzyLike {
+  display: flex;
+  text-decoration: none;
+  column-gap: 12px;
+}
+
+.twitzyLikeIcon {
+  fill: #EB6A31;
+  margin: auto 0;
+}
+
+.twitzyLikeCount {
+  font-size: 16px;
+  font-family: sans-serif;
+  font-weight: 400;
+	color: lightgray;
+  margin: auto 0;
+  vertical-align: middle;
+}
+
+.twitzyReply {
+  display: flex;
+  text-decoration: none;
+  column-gap: 12px;
+}
+
+.twitzyReplyIcon {
+  fill: #43B6EB;
+  margin: auto 0;
+  padding-bottom: 2px;
+}
+
+.twitzyReplyWord {
+  font-size: 16px;
+  font-family: sans-serif;
+  font-weight: 400;
+	color: lightgray;
+  margin: auto 0;
+  vertical-align: middle;
+}
+
+.twitzyRetweet {
+  display: flex;
+  text-decoration: none;
+  column-gap: 12px;
+}
+
+.twitzyRetweetIcon {
+  fill: #43B6EB;
+  margin: auto 0;
+}
