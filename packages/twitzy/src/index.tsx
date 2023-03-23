@@ -439,9 +439,38 @@ const TwitzyRetweet = React.forwardRef<TwitzyRetweetElement, TwitzyRetweetProps>
  * TwitzyCopyLink
  * ----------------------------------------------------------------------------------------------*/
 
-/* ------------------------------------------------------------------------------------------------
- * TwitzyCopyLink
- * ----------------------------------------------------------------------------------------------*/
+type TwitzyCopyLinkProps = React.HTMLAttributes<HTMLButtonElement> & {
+	render: (copied: boolean) => React.ReactNode;
+	author: string;
+	tweetId: string;
+};
+
+type TwitzyCopyLinkElement = HTMLButtonElement;
+
+const TwitzyCopyLink = React.forwardRef<TwitzyCopyLinkElement, TwitzyCopyLinkProps>(
+	(props, forwardedRef) => {
+		const { render, author, tweetId, ...passThrough } = props;
+		const [copied, setCopied] = React.useState(false);
+
+		const tweetUrl = `https://twitter.com/${author}/status/${tweetId}`;
+
+		return (
+			<button
+				twitzy-copy-link=""
+				{...passThrough}
+				ref={forwardedRef}
+				onClick={(event) => {
+					navigator.clipboard.writeText(tweetUrl);
+					setCopied(true);
+					setTimeout(() => setCopied(false), 5000);
+					if (passThrough.onClick) passThrough.onClick(event);
+				}}
+			>
+				{render(copied)}
+			</button>
+		);
+	}
+);
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyProfileLink
@@ -470,4 +499,5 @@ export {
 	TwitzyLike,
 	TwitzyReply,
 	TwitzyRetweet,
+	TwitzyCopyLink,
 };
