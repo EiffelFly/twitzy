@@ -223,7 +223,6 @@ const TwitzyAvatarGradientFallback = React.forwardRef<
 					</linearGradient>
 				</defs>
 				<rect fill={`url(#${authorName})`} x="0" y="0" width={size} height={size} />
-				{/* <circle fill="url(#gradient)" cx={`${size / 2}`} cy={`${size / 2}`} r={`${size / 2}`} /> */}
 			</g>
 		</svg>
 	) : null;
@@ -473,12 +472,55 @@ const TwitzyCopyLink = React.forwardRef<TwitzyCopyLinkElement, TwitzyCopyLinkPro
 );
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyProfileLink
- * ----------------------------------------------------------------------------------------------*/
-
-/* ------------------------------------------------------------------------------------------------
  * TwitzyContent
  * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyContentProps = React.HTMLAttributes<HTMLDivElement> & {
+	content: string;
+};
+
+type TwitzyContentElement = HTMLDivElement;
+
+const TwitzyContent = React.forwardRef<TwitzyContentElement, TwitzyContentProps>(
+	(props, forwardedRef) => {
+		const { content, ...passThrough } = props;
+
+		const regexToMatchURL =
+			/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
+
+		const formattedContent = content
+			// Format all hyperlinks
+			.replace(
+				regexToMatchURL,
+				(match) => `<a href="${match}" target="_blank">${match.replace(/^http(s?):\/\//i, '')}</a>`
+			)
+			// Format all @ mentions
+			.replace(
+				/\B\@([\w\-]+)/gim,
+				(match) =>
+					`<a href="https://twitter.com/${match.replace('@', '')}" target="_blank">${match}</a>`
+			)
+			// Format all # hashtags
+			.replace(
+				/(#+[a-zA-Z0-9(_)]{1,})/g,
+				(match) =>
+					`<a href="https://twitter.com/hashtag/${match.replace(
+						'#',
+						''
+					)}" target="_blank">${match}</a>`
+			);
+
+		return (
+			<div
+				ref={forwardedRef}
+				{...passThrough}
+				dangerouslySetInnerHTML={{ __html: formattedContent }}
+			/>
+		);
+	}
+);
+
+TwitzyContent.displayName = 'TwitzyContent';
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyTweet
