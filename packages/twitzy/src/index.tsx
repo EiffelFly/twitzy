@@ -1,6 +1,6 @@
-import * as React from 'react';
-import color from 'tinycolor2';
-import { Nullable } from './type';
+import * as React from "react";
+import color from "tinycolor2";
+import { Nullable } from "./type";
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyProvider
@@ -18,7 +18,7 @@ const TwitzyContext = React.createContext<TwitzyContextValue>({
 const useTwitzyContext = () => {
 	const context = React.useContext(TwitzyContext);
 	if (context === undefined) {
-		throw new Error('useTwitzy must be used within a TwitzyProvider');
+		throw new Error("useTwitzy must be used within a TwitzyProvider");
 	}
 	return context;
 };
@@ -49,284 +49,15 @@ const Twitzy = (props: { children: React.ReactNode }) => {
 };
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyAvatarProvider
- * ----------------------------------------------------------------------------------------------*/
-
-type AvatarLoadingStatus = 'idle' | 'loading' | 'loaded' | 'error';
-
-type TwitzyAvatarContextValue = {
-	avatarLoadingStatus: AvatarLoadingStatus;
-	onAvatarLoadingStatusChange?: (status: AvatarLoadingStatus) => void;
-};
-
-const TwitzyAvatarContext = React.createContext<TwitzyAvatarContextValue>({
-	avatarLoadingStatus: 'idle',
-});
-
-const useTwitzyAvatarContext = () => {
-	const context = React.useContext(TwitzyAvatarContext);
-	if (context === undefined) {
-		throw new Error('useTwitzy must be used within a TwitzyProvider');
-	}
-	return context;
-};
-
-const TwitzyAvatarProvider = ({ children }: { children: React.ReactNode }) => {
-	const [avatarLoadingStatus, setAvatarLoadingStatus] = React.useState<AvatarLoadingStatus>('idle');
-
-	const context: TwitzyAvatarContextValue = React.useMemo(
-		() => ({
-			avatarLoadingStatus,
-			onAvatarLoadingStatusChange: (status: AvatarLoadingStatus) => {
-				setAvatarLoadingStatus(status);
-			},
-		}),
-		[avatarLoadingStatus]
-	);
-
-	return <TwitzyAvatarContext.Provider value={context}>{children}</TwitzyAvatarContext.Provider>;
-};
-
-/* ------------------------------------------------------------------------------------------------
- * TwitzyAvatarP
- * ----------------------------------------------------------------------------------------------*/
-
-type TwitzyAvatar = {
-	children?: React.ReactNode;
-};
-
-const TwitzyAvatar = (props: TwitzyAvatar) => {
-	const { children } = props;
-	return <TwitzyAvatarProvider>{children}</TwitzyAvatarProvider>;
-};
-
-/* ------------------------------------------------------------------------------------------------
- * TwitzyAvatarImage
- * ----------------------------------------------------------------------------------------------*/
-
-type TwitzyAvatarImageProps = React.ImgHTMLAttributes<HTMLImageElement> & {
-	src: string;
-	alt: string;
-};
-
-type TwitzyAvatarImageElement = HTMLImageElement;
-
-const TwitzyAvatarImage = React.forwardRef<TwitzyAvatarImageElement, TwitzyAvatarImageProps>(
-	(props, forwardedRef) => {
-		const { src, alt, ...passThrough } = props;
-
-		const context = useTwitzyAvatarContext();
-		const avatarLoadingStatus = useAvatarLoadingStatus(src);
-
-		React.useEffect(() => {
-			if (context.onAvatarLoadingStatusChange) {
-				context.onAvatarLoadingStatusChange(avatarLoadingStatus);
-			}
-		}, [avatarLoadingStatus, context]);
-
-		return avatarLoadingStatus === 'loaded' ? (
-			<img src={src} alt={alt} ref={forwardedRef} {...passThrough} />
-		) : null;
-	}
-);
-
-TwitzyAvatarImage.displayName = 'TwitzyAvatarImage';
-
-/* ------------------------------------------------------------------------------------------------
- * useAvatarLoadingStatus
- * ----------------------------------------------------------------------------------------------*/
-
-function useAvatarLoadingStatus(src?: string) {
-	const [loadingStatus, setLoadingStatus] = React.useState<AvatarLoadingStatus>('idle');
-
-	React.useEffect(() => {
-		if (!src) {
-			setLoadingStatus('error');
-			return;
-		}
-
-		let isMounted = true;
-		const image = new window.Image();
-
-		const updateStatus = (status: AvatarLoadingStatus) => () => {
-			if (!isMounted) return;
-			setLoadingStatus(status);
-		};
-
-		setLoadingStatus('loading');
-		image.onload = updateStatus('loaded');
-		image.onerror = updateStatus('error');
-		image.src = src;
-
-		return () => {
-			isMounted = false;
-		};
-	}, [src]);
-
-	return loadingStatus;
-}
-
-/* ------------------------------------------------------------------------------------------------
- * TwitzyAvatarGradientFallback
- * ----------------------------------------------------------------------------------------------*/
-
-/* Credit: https://github.com/vercel/avatar */
-
-function djb2(str: string) {
-	let hash = 5381;
-	for (let i = 0; i < str.length; i++) {
-		hash = (hash << 5) + hash + str.charCodeAt(i);
-	}
-	return hash;
-}
-
-function generateGradient(username: string) {
-	const c1 = color({ h: djb2(username) % 360, s: 0.95, l: 0.5 });
-	const second = c1.triad()[1].toHexString();
-
-	return {
-		fromColor: c1.toHexString(),
-		toColor: second,
-	};
-}
-
-type TwitzyAvatarGradientFallbackProps = React.ImgHTMLAttributes<SVGSVGElement> & {
-	size: number;
-	authorName: string;
-};
-
-type TwitzyAvatarGradientFallbackElement = SVGSVGElement;
-
-const TwitzyAvatarGradientFallback = React.forwardRef<
-	TwitzyAvatarGradientFallbackElement,
-	TwitzyAvatarGradientFallbackProps
->((props, forwardedRef) => {
-	const { size, authorName, ...passThrough } = props;
-
-	const context = useTwitzyAvatarContext();
-	const gradientColor = generateGradient(authorName);
-
-	return context.avatarLoadingStatus !== 'loaded' ? (
-		<svg
-			width={size}
-			height={size}
-			viewBox={`0 0 ${size} ${size}`}
-			version="1.1"
-			xmlns="http://www.w3.org/2000/svg"
-			ref={forwardedRef}
-			{...passThrough}
-		>
-			<g>
-				<defs>
-					<linearGradient id={`${authorName}`} x1="0" y1="0" x2="1" y2="1">
-						<stop offset="0%" stopColor={gradientColor.fromColor} />
-						<stop offset="100%" stopColor={gradientColor.toColor} />
-					</linearGradient>
-				</defs>
-				<rect fill={`url(#${authorName})`} x="0" y="0" width={size} height={size} />
-			</g>
-		</svg>
-	) : null;
-});
-
-TwitzyAvatarGradientFallback.displayName = 'TwitzyAvatarGradientFallback';
-
-/* ------------------------------------------------------------------------------------------------
- * TwitzyAvatarFallback
- * ----------------------------------------------------------------------------------------------*/
-
-type TwitzyAvatarFallbackProps = React.ImgHTMLAttributes<HTMLDivElement> & {
-	children?: React.ReactNode;
-};
-
-type TwitzyAvatarFallbackElement = HTMLDivElement;
-
-const TwitzyAvatarFallback = React.forwardRef<
-	TwitzyAvatarFallbackElement,
-	TwitzyAvatarFallbackProps
->((props, forwardedRef) => {
-	const { children, ...passThrough } = props;
-
-	const context = useTwitzyAvatarContext();
-
-	return context.avatarLoadingStatus !== 'loaded' ? (
-		<div ref={forwardedRef} {...passThrough}>
-			{children}
-		</div>
-	) : null;
-});
-
-TwitzyAvatarFallback.displayName = 'TwitzyAvatarFallback';
-
-/* ------------------------------------------------------------------------------------------------
- * TwitzyTimeStamp
- * ----------------------------------------------------------------------------------------------*/
-
-type TwitzyTimeStampProps = React.TimeHTMLAttributes<HTMLTimeElement> & {
-	time: string;
-};
-
-type TwitzyTimeStampElement = HTMLTimeElement;
-
-const transferMonthNumToName = (month: number) => {
-	switch (month) {
-		case 0:
-			return 'Jan';
-		case 1:
-			return 'Feb';
-		case 2:
-			return 'Mar';
-		case 3:
-			return 'Apr';
-		case 4:
-			return 'May';
-		case 5:
-			return 'Jun';
-		case 6:
-			return 'Jul';
-		case 7:
-			return 'Aug';
-		case 8:
-			return 'Sep';
-		case 9:
-			return 'Oct';
-		case 10:
-			return 'Nov';
-		case 11:
-			return 'Dec';
-		default:
-			throw new Error("Month doesn't exist!");
-	}
-};
-
-const TwitzyTimeStamp = React.forwardRef<TwitzyTimeStampElement, TwitzyTimeStampProps>(
-	(props, forwardedRef) => {
-		const { time, ...passThrough } = props;
-		const Time = new Date(time);
-
-		const [month, day, year] = [Time.getMonth(), Time.getDate(), Time.getFullYear()];
-		const [hour, minute] = [Time.getHours(), Time.getMinutes()];
-
-		return (
-			<time
-				{...passThrough}
-				ref={forwardedRef}
-				title={`Time Posted: ${Time.toUTCString()}`}
-				dateTime={Time.toISOString()}
-			>
-				{`${hour}:${minute} - ${transferMonthNumToName(month)} ${day}, ${year}`}
-			</time>
-		);
-	}
-);
-
-/* ------------------------------------------------------------------------------------------------
  * TwitzyTweetProvider
  * ----------------------------------------------------------------------------------------------*/
 
 type Tweet = {
 	id: string;
 	author: string;
+	content: string;
+	createdAt: string;
+	avatarSrc: string;
 };
 
 type TwitzyTweetContextValue = {
@@ -342,7 +73,7 @@ function useTwitzyTweetContext() {
 	const context = React.useContext(TwitzyTweetContext);
 	if (context === undefined) {
 		throw new Error(
-			'useTwitzyTweetContext must be used within a TwitzyTweetProvider, you may forget to wrap your component with TwitzyTweet'
+			"useTwitzyTweetContext must be used within a TwitzyTweetProvider, you may forget to wrap your component with TwitzyTweet"
 		);
 	}
 	return context;
@@ -394,7 +125,222 @@ const TwitzyTweet = React.forwardRef<TwitzyTweetElement, TwitzyTweetProps>(
 	}
 );
 
-TwitzyTweet.displayName = 'TwitzyTweet';
+TwitzyTweet.displayName = "TwitzyTweet";
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyAvatarProvider
+ * ----------------------------------------------------------------------------------------------*/
+
+type AvatarLoadingStatus = "idle" | "loading" | "loaded" | "error";
+
+type TwitzyAvatarContextValue = {
+	avatarLoadingStatus: AvatarLoadingStatus;
+	onAvatarLoadingStatusChange?: (status: AvatarLoadingStatus) => void;
+};
+
+const TwitzyAvatarContext = React.createContext<TwitzyAvatarContextValue>({
+	avatarLoadingStatus: "idle",
+});
+
+const useTwitzyAvatarContext = () => {
+	const context = React.useContext(TwitzyAvatarContext);
+	if (context === undefined) {
+		throw new Error("useTwitzy must be used within a TwitzyProvider");
+	}
+	return context;
+};
+
+const TwitzyAvatarProvider = ({ children }: { children: React.ReactNode }) => {
+	const [avatarLoadingStatus, setAvatarLoadingStatus] = React.useState<AvatarLoadingStatus>("idle");
+
+	const context: TwitzyAvatarContextValue = React.useMemo(
+		() => ({
+			avatarLoadingStatus,
+			onAvatarLoadingStatusChange: (status: AvatarLoadingStatus) => {
+				setAvatarLoadingStatus(status);
+			},
+		}),
+		[avatarLoadingStatus]
+	);
+
+	return <TwitzyAvatarContext.Provider value={context}>{children}</TwitzyAvatarContext.Provider>;
+};
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyAvatar
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyAvatar = {
+	children?: React.ReactNode;
+};
+
+const TwitzyAvatar = (props: TwitzyAvatar) => {
+	const { children } = props;
+	return <TwitzyAvatarProvider>{children}</TwitzyAvatarProvider>;
+};
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyAvatarImage
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyAvatarImageProps = React.ImgHTMLAttributes<HTMLImageElement>;
+
+type TwitzyAvatarImageElement = HTMLImageElement;
+
+const TwitzyAvatarImage = React.forwardRef<TwitzyAvatarImageElement, TwitzyAvatarImageProps>(
+	(props, forwardedRef) => {
+		const avatarContext = useTwitzyAvatarContext();
+		const tweetContext = useTwitzyTweetContext();
+		const avatarLoadingStatus = useAvatarLoadingStatus(tweetContext.tweet?.avatarSrc);
+
+		React.useEffect(() => {
+			if (avatarContext.onAvatarLoadingStatusChange) {
+				avatarContext.onAvatarLoadingStatusChange(avatarLoadingStatus);
+			}
+		}, [avatarLoadingStatus, avatarContext]);
+
+		return avatarLoadingStatus === "loaded" ? (
+			<img
+				{...props}
+				src={tweetContext.tweet?.avatarSrc}
+				alt={`${tweetContext.tweet?.id}-avatar`}
+				ref={forwardedRef}
+			/>
+		) : null;
+	}
+);
+
+TwitzyAvatarImage.displayName = "TwitzyAvatarImage";
+
+/* ------------------------------------------------------------------------------------------------
+ * useAvatarLoadingStatus
+ * ----------------------------------------------------------------------------------------------*/
+
+function useAvatarLoadingStatus(src?: string) {
+	const [loadingStatus, setLoadingStatus] = React.useState<AvatarLoadingStatus>("idle");
+
+	React.useEffect(() => {
+		if (!src) {
+			setLoadingStatus("error");
+			return;
+		}
+
+		let isMounted = true;
+		const image = new window.Image();
+
+		const updateStatus = (status: AvatarLoadingStatus) => () => {
+			if (!isMounted) return;
+			setLoadingStatus(status);
+		};
+
+		setLoadingStatus("loading");
+		image.onload = updateStatus("loaded");
+		image.onerror = updateStatus("error");
+		image.src = src;
+
+		return () => {
+			isMounted = false;
+		};
+	}, [src]);
+
+	return loadingStatus;
+}
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyAvatarGradientFallback
+ * ----------------------------------------------------------------------------------------------*/
+
+/* Credit: https://github.com/vercel/avatar */
+
+function djb2(str: string) {
+	let hash = 5381;
+	for (let i = 0; i < str.length; i++) {
+		hash = (hash << 5) + hash + str.charCodeAt(i);
+	}
+	return hash;
+}
+
+function generateGradient(username?: string) {
+	let string = username ? username : (Math.random() + 1).toString(36).substring(7);
+
+	const c1 = color({ h: djb2(string) % 360, s: 0.95, l: 0.5 });
+	const second = c1.triad()[1].toHexString();
+
+	return {
+		fromColor: c1.toHexString(),
+		toColor: second,
+	};
+}
+
+type TwitzyAvatarGradientFallbackProps = React.ImgHTMLAttributes<SVGSVGElement> & {
+	size: number;
+};
+
+type TwitzyAvatarGradientFallbackElement = SVGSVGElement;
+
+const TwitzyAvatarGradientFallback = React.forwardRef<
+	TwitzyAvatarGradientFallbackElement,
+	TwitzyAvatarGradientFallbackProps
+>((props, forwardedRef) => {
+	const { size, ...passThrough } = props;
+
+	const avatarContext = useTwitzyAvatarContext();
+	const tweetContext = useTwitzyTweetContext();
+	const gradientColor = generateGradient(tweetContext.tweet?.author);
+
+	const gradientId = `${tweetContext.tweet?.id}-${tweetContext.tweet?.author}-avatar`;
+
+	return avatarContext.avatarLoadingStatus !== "loaded" ? (
+		<svg
+			width={size}
+			height={size}
+			viewBox={`0 0 ${size} ${size}`}
+			version="1.1"
+			xmlns="http://www.w3.org/2000/svg"
+			ref={forwardedRef}
+			{...passThrough}
+		>
+			<g>
+				<defs>
+					<linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
+						<stop offset="0%" stopColor={gradientColor.fromColor} />
+						<stop offset="100%" stopColor={gradientColor.toColor} />
+					</linearGradient>
+				</defs>
+				<rect fill={`url(#${gradientId})`} x="0" y="0" width={size} height={size} />
+			</g>
+		</svg>
+	) : null;
+});
+
+TwitzyAvatarGradientFallback.displayName = "TwitzyAvatarGradientFallback";
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyAvatarFallback
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyAvatarFallbackProps = React.ImgHTMLAttributes<HTMLDivElement> & {
+	children?: React.ReactNode;
+};
+
+type TwitzyAvatarFallbackElement = HTMLDivElement;
+
+const TwitzyAvatarFallback = React.forwardRef<
+	TwitzyAvatarFallbackElement,
+	TwitzyAvatarFallbackProps
+>((props, forwardedRef) => {
+	const { children, ...passThrough } = props;
+
+	const context = useTwitzyAvatarContext();
+
+	return context.avatarLoadingStatus !== "loaded" ? (
+		<div ref={forwardedRef} {...passThrough}>
+			{children}
+		</div>
+	) : null;
+});
+
+TwitzyAvatarFallback.displayName = "TwitzyAvatarFallback";
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyToolBar
@@ -547,52 +493,113 @@ const TwitzyCopyLink = React.forwardRef<TwitzyCopyLinkElement, TwitzyCopyLinkPro
  * TwitzyContent
  * ----------------------------------------------------------------------------------------------*/
 
-type TwitzyContentProps = React.HTMLAttributes<HTMLDivElement> & {
-	content: string;
-};
+type TwitzyTweetContentProps = React.HTMLAttributes<HTMLDivElement>;
 
-type TwitzyContentElement = HTMLDivElement;
+type TwitzyTweetContentElement = HTMLDivElement;
 
-const TwitzyContent = React.forwardRef<TwitzyContentElement, TwitzyContentProps>(
+const TwitzyTweetContent = React.forwardRef<TwitzyTweetContentElement, TwitzyTweetContentProps>(
 	(props, forwardedRef) => {
-		const { content, ...passThrough } = props;
+		const context = useTwitzyTweetContext();
 
 		const regexToMatchURL =
 			/(http|ftp|https):\/\/[\w-]+(\.[\w-]+)+([\w.,@?^=%&amp;:\/~+#-]*[\w@?^=%&amp;\/~+#-])?/;
 
-		const formattedContent = content
+		const formattedContent = context.tweet?.content
 			// Format all hyperlinks
 			.replace(
 				regexToMatchURL,
-				(match) => `<a href="${match}" target="_blank">${match.replace(/^http(s?):\/\//i, '')}</a>`
+				(match) => `<a href="${match}" target="_blank">${match.replace(/^http(s?):\/\//i, "")}</a>`
 			)
 			// Format all @ mentions
 			.replace(
 				/\B\@([\w\-]+)/gim,
 				(match) =>
-					`<a href="https://twitter.com/${match.replace('@', '')}" target="_blank">${match}</a>`
+					`<a href="https://twitter.com/${match.replace("@", "")}" target="_blank">${match}</a>`
 			)
 			// Format all # hashtags
 			.replace(
 				/(#+[a-zA-Z0-9(_)]{1,})/g,
 				(match) =>
 					`<a href="https://twitter.com/hashtag/${match.replace(
-						'#',
-						''
+						"#",
+						""
 					)}" target="_blank">${match}</a>`
 			);
 
 		return (
 			<div
 				ref={forwardedRef}
-				{...passThrough}
-				dangerouslySetInnerHTML={{ __html: formattedContent }}
+				{...props}
+				dangerouslySetInnerHTML={{ __html: formattedContent ? formattedContent : "" }}
 			/>
 		);
 	}
 );
 
-TwitzyContent.displayName = 'TwitzyContent';
+TwitzyTweetContent.displayName = "TwitzyTweetContent";
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyTimeStamp
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTimeStampProps = React.HTMLAttributes<HTMLDivElement>;
+
+type TwitzyTimeStampElement = HTMLDivElement;
+
+const transferMonthNumToName = (month: number) => {
+	switch (month) {
+		case 0:
+			return "Jan";
+		case 1:
+			return "Feb";
+		case 2:
+			return "Mar";
+		case 3:
+			return "Apr";
+		case 4:
+			return "May";
+		case 5:
+			return "Jun";
+		case 6:
+			return "Jul";
+		case 7:
+			return "Aug";
+		case 8:
+			return "Sep";
+		case 9:
+			return "Oct";
+		case 10:
+			return "Nov";
+		case 11:
+			return "Dec";
+		default:
+			throw new Error("Month doesn't exist!");
+	}
+};
+
+const TwitzyTimeStamp = React.forwardRef<TwitzyTimeStampElement, TwitzyTimeStampProps>(
+	(props, forwardedRef) => {
+		const context = useTwitzyTweetContext();
+
+		if (!context.tweet?.createdAt) {
+			return (
+				<div {...props} ref={forwardedRef}>
+					{`--:-- - -- --, --`}
+				</div>
+			);
+		}
+
+		const Time = new Date(context.tweet?.createdAt);
+
+		return (
+			<div {...props} ref={forwardedRef}>
+				{`${Time.getHours()}:${Time.getMinutes()} - ${transferMonthNumToName(
+					Time.getMonth()
+				)} ${Time.getDate()}, ${Time.getFullYear()}`}
+			</div>
+		);
+	}
+);
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyAuthor
@@ -611,4 +618,5 @@ export {
 	TwitzyRetweet,
 	TwitzyCopyLink,
 	TwitzyTweet,
+	TwitzyTweetContent,
 };
