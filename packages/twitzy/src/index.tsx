@@ -1,5 +1,6 @@
 import * as React from 'react';
 import color from 'tinycolor2';
+import { Nullable } from './type';
 
 /* ------------------------------------------------------------------------------------------------
  * TwitzyProvider
@@ -320,6 +321,82 @@ const TwitzyTimeStamp = React.forwardRef<TwitzyTimeStampElement, TwitzyTimeStamp
 );
 
 /* ------------------------------------------------------------------------------------------------
+ * TwitzyTweetProvider
+ * ----------------------------------------------------------------------------------------------*/
+
+type Tweet = {
+	id: string;
+	author: string;
+};
+
+type TwitzyTweetContextValue = {
+	tweet: Nullable<Tweet>;
+	setTweet?: (tweet: Nullable<Tweet>) => void;
+};
+
+const TwitzyTweetContext = React.createContext<TwitzyTweetContextValue>({
+	tweet: null,
+});
+
+function useTwitzyTweetContext() {
+	const context = React.useContext(TwitzyTweetContext);
+	if (context === undefined) {
+		throw new Error(
+			'useTwitzyTweetContext must be used within a TwitzyTweetProvider, you may forget to wrap your component with TwitzyTweet'
+		);
+	}
+	return context;
+}
+
+const TwitzyTweetProvider = ({
+	children,
+	initialTweet,
+}: {
+	children: React.ReactNode;
+	initialTweet: Nullable<Tweet>;
+}) => {
+	const [tweet, setTweet] = React.useState<Nullable<Tweet>>(initialTweet);
+
+	const context: TwitzyTweetContextValue = React.useMemo(
+		() => ({
+			tweet,
+			setTweet: (tweet: Nullable<Tweet>) => {
+				setTweet(tweet);
+			},
+		}),
+		[tweet]
+	);
+
+	return <TwitzyTweetContext.Provider value={context}>{children}</TwitzyTweetContext.Provider>;
+};
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyTweet
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTweetProps = React.HTMLAttributes<HTMLDivElement> & {
+	children: React.ReactNode;
+	tweet: Nullable<Tweet>;
+};
+
+type TwitzyTweetElement = HTMLDivElement;
+
+const TwitzyTweet = React.forwardRef<TwitzyTweetElement, TwitzyTweetProps>(
+	(props, forwardedRef) => {
+		const { tweet, children, ...passThrough } = props;
+		return (
+			<TwitzyTweetProvider initialTweet={tweet}>
+				<div ref={forwardedRef} {...passThrough}>
+					{children}
+				</div>
+			</TwitzyTweetProvider>
+		);
+	}
+);
+
+TwitzyTweet.displayName = 'TwitzyTweet';
+
+/* ------------------------------------------------------------------------------------------------
  * TwitzyToolBar
  * ----------------------------------------------------------------------------------------------*/
 
@@ -346,15 +423,14 @@ const TwitzyToolbar = React.forwardRef<TwitzyToolbarElement, TwitzyToolbarProps>
 
 type TwitzyLikeProps = React.HTMLAttributes<HTMLAnchorElement> & {
 	children: React.ReactNode;
-	tweetId: string;
 };
 
 type TwitzyLikeElement = HTMLAnchorElement;
 
 const TwitzyLike = React.forwardRef<TwitzyLikeElement, TwitzyLikeProps>((props, forwardedRef) => {
-	const { children, tweetId, ...passThrough } = props;
-
-	const likeUrl = `https://twitter.com/intent/like?tweet_id=${tweetId}`;
+	const { children, ...passThrough } = props;
+	const context = useTwitzyTweetContext();
+	const likeUrl = `https://twitter.com/intent/like?tweet_id=${context.tweet?.id}`;
 
 	return (
 		<a
@@ -376,16 +452,15 @@ const TwitzyLike = React.forwardRef<TwitzyLikeElement, TwitzyLikeProps>((props, 
 
 type TwitzyReplyProps = React.HTMLAttributes<HTMLAnchorElement> & {
 	children: React.ReactNode;
-	tweetId: string;
 };
 
 type TwitzyReplyElement = HTMLAnchorElement;
 
 const TwitzyReply = React.forwardRef<TwitzyReplyElement, TwitzyReplyProps>(
 	(props, forwardedRef) => {
-		const { children, tweetId, ...passThrough } = props;
-
-		const replyUrl = `https://twitter.com/intent/tweet?in_reply_to=${tweetId}`;
+		const { children, ...passThrough } = props;
+		const context = useTwitzyTweetContext();
+		const replyUrl = `https://twitter.com/intent/tweet?in_reply_to=${context.tweet?.id}`;
 
 		return (
 			<a
@@ -408,16 +483,15 @@ const TwitzyReply = React.forwardRef<TwitzyReplyElement, TwitzyReplyProps>(
 
 type TwitzyRetweetProps = React.HTMLAttributes<HTMLAnchorElement> & {
 	children: React.ReactNode;
-	tweetId: string;
 };
 
 type TwitzyRetweetElement = HTMLAnchorElement;
 
 const TwitzyRetweet = React.forwardRef<TwitzyRetweetElement, TwitzyRetweetProps>(
 	(props, forwardedRef) => {
-		const { children, tweetId, ...passThrough } = props;
-
-		const retweetUrl = `https://twitter.com/intent/retweet?tweet_id=${tweetId}`;
+		const { children, ...passThrough } = props;
+		const context = useTwitzyTweetContext();
+		const retweetUrl = `https://twitter.com/intent/retweet?tweet_id=${context.tweet?.id}`;
 
 		return (
 			<a
@@ -440,18 +514,16 @@ const TwitzyRetweet = React.forwardRef<TwitzyRetweetElement, TwitzyRetweetProps>
 
 type TwitzyCopyLinkProps = React.HTMLAttributes<HTMLButtonElement> & {
 	render: (copied: boolean) => React.ReactNode;
-	author: string;
-	tweetId: string;
 };
 
 type TwitzyCopyLinkElement = HTMLButtonElement;
 
 const TwitzyCopyLink = React.forwardRef<TwitzyCopyLinkElement, TwitzyCopyLinkProps>(
 	(props, forwardedRef) => {
-		const { render, author, tweetId, ...passThrough } = props;
+		const { render, ...passThrough } = props;
 		const [copied, setCopied] = React.useState(false);
-
-		const tweetUrl = `https://twitter.com/${author}/status/${tweetId}`;
+		const context = useTwitzyTweetContext();
+		const tweetUrl = `https://twitter.com/${context.tweet?.author}/status/${context.tweet?.id}`;
 
 		return (
 			<button
@@ -523,10 +595,6 @@ const TwitzyContent = React.forwardRef<TwitzyContentElement, TwitzyContentProps>
 TwitzyContent.displayName = 'TwitzyContent';
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyTweet
- * ----------------------------------------------------------------------------------------------*/
-
-/* ------------------------------------------------------------------------------------------------
  * TwitzyAuthor
  * ----------------------------------------------------------------------------------------------*/
 
@@ -542,4 +610,5 @@ export {
 	TwitzyReply,
 	TwitzyRetweet,
 	TwitzyCopyLink,
+	TwitzyTweet,
 };
