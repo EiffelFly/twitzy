@@ -55,6 +55,7 @@ const Twitzy = (props: { children: React.ReactNode }) => {
 type Tweet = {
 	id: string;
 	author: string;
+	authorUrl: string;
 	content: string;
 	createdAt: string;
 	avatarSrc: string;
@@ -602,8 +603,83 @@ const TwitzyTimeStamp = React.forwardRef<TwitzyTimeStampElement, TwitzyTimeStamp
 );
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyAuthor
+ * TwitzyTweetAuthor
  * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTweetAuthorProps = React.HTMLAttributes<HTMLDivElement> & { children: React.ReactNode };
+
+type TwitzyTweetAuthorElement = HTMLDivElement;
+
+const TwitzyTweetAuthor = React.forwardRef<TwitzyTweetAuthorElement, TwitzyTweetAuthorProps>(
+	(props, forwardedRef) => {
+		const { children, ...passThrough } = props;
+		return (
+			<div {...passThrough} ref={forwardedRef}>
+				{children}
+			</div>
+		);
+	}
+);
+
+TwitzyTweetAuthor.displayName = "TwitzyTweetAuthor";
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyTweetAuthorName
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTweetAuthorNameProps = React.HTMLAttributes<HTMLParagraphElement>;
+
+type TwitzyTweetAuthorNamElement = HTMLDivElement;
+
+const TwitzyTweetAuthorName = React.forwardRef<
+	TwitzyTweetAuthorNamElement,
+	TwitzyTweetAuthorNameProps
+>((props, forwardedRef) => {
+	const context = useTwitzyTweetContext();
+
+	return (
+		<p {...props} ref={forwardedRef}>
+			{context.tweet?.author}
+		</p>
+	);
+});
+
+TwitzyTweetAuthorName.displayName = "TwitzyTweetAuthorName";
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyTweetAuthorProfileLink
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTweetAuthorProfileLinkProps = React.HTMLAttributes<HTMLAnchorElement>;
+
+type TwitzyTweetAuthorProfileLinkElement = HTMLAnchorElement;
+
+const TwitzyTweetAuthorProfileLink = React.forwardRef<
+	TwitzyTweetAuthorProfileLinkElement,
+	TwitzyTweetAuthorProfileLinkProps
+>((props, forwardedRef) => {
+	const context = useTwitzyTweetContext();
+
+	return (
+		<a
+			{...props}
+			href={context.tweet?.authorUrl}
+			ref={forwardedRef}
+			target="_blank"
+			rel="noopener noreferrer"
+		>
+			{`@${context.tweet?.author}`}
+		</a>
+	);
+});
+
+TwitzyTweetAuthorProfileLink.displayName = "TwitzyTweetAuthorProfileLink";
+
+const TweetAuthor = {
+	Root: TwitzyTweetAuthor,
+	Name: TwitzyTweetAuthorName,
+	ProfileLink: TwitzyTweetAuthorProfileLink,
+};
 
 export {
 	Twitzy,
@@ -619,4 +695,5 @@ export {
 	TwitzyCopyLink,
 	TwitzyTweet,
 	TwitzyTweetContent,
+	TweetAuthor,
 };
