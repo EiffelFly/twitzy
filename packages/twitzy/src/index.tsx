@@ -629,10 +629,10 @@ TwitzyTweetAuthor.displayName = "TwitzyTweetAuthor";
 
 type TwitzyTweetAuthorNameProps = React.HTMLAttributes<HTMLParagraphElement>;
 
-type TwitzyTweetAuthorNamElement = HTMLDivElement;
+type TwitzyTweetAuthorNameElement = HTMLParagraphElement;
 
 const TwitzyTweetAuthorName = React.forwardRef<
-	TwitzyTweetAuthorNamElement,
+	TwitzyTweetAuthorNameElement,
 	TwitzyTweetAuthorNameProps
 >((props, forwardedRef) => {
 	const context = useTwitzyTweetContext();
@@ -675,10 +675,64 @@ const TwitzyTweetAuthorProfileLink = React.forwardRef<
 
 TwitzyTweetAuthorProfileLink.displayName = "TwitzyTweetAuthorProfileLink";
 
-const TweetAuthor = {
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyTweetOverview
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTweetOverviewProps = React.HTMLAttributes<HTMLDivElement> & {
+	children: React.ReactNode;
+};
+
+type TwitzyTweetOverviewElement = HTMLDivElement;
+
+const TwitzyTweetOverview = React.forwardRef<TwitzyTweetOverviewElement, TwitzyTweetOverviewProps>(
+	(props, forwardedRef) => {
+		const { children, ...passThrough } = props;
+
+		return (
+			<div {...passThrough} ref={forwardedRef}>
+				{children}
+			</div>
+		);
+	}
+);
+
+TwitzyTweetOverview.displayName = "TwitzyTweetOverview";
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyTweetOverviewCard
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyTweetOverviewCardProps = React.HTMLAttributes<HTMLDivElement> & {
+	children: React.ReactNode;
+};
+
+type TwitzyTweetOverviewCardElement = HTMLDivElement;
+
+const TwitzyTweetOverviewCard = React.forwardRef<
+	TwitzyTweetOverviewCardElement,
+	TwitzyTweetOverviewCardProps
+>((props, forwardedRef) => {
+	const { children, ...passThrough } = props;
+
+	return (
+		<div {...passThrough} ref={forwardedRef}>
+			{children}
+		</div>
+	);
+});
+
+TwitzyTweetOverviewCard.displayName = "TwitzyTweetOverviewCard";
+
+const TwitzyAuthor = {
 	Root: TwitzyTweetAuthor,
 	Name: TwitzyTweetAuthorName,
 	ProfileLink: TwitzyTweetAuthorProfileLink,
+};
+
+const TwitzyOverview = {
+	Root: TwitzyTweetOverview,
+	Card: TwitzyTweetOverviewCard,
 };
 
 export {
@@ -695,5 +749,6 @@ export {
 	TwitzyCopyLink,
 	TwitzyTweet,
 	TwitzyTweetContent,
-	TweetAuthor,
+	TwitzyAuthor,
+	TwitzyOverview,
 };
