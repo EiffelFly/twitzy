@@ -130,3 +130,29 @@
 .avatar {
   border-radius: 100%;
 }
+
+
+.authorContainer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 4px;
+}
+
+.authorName {
+  font-size: 16px;
+  font-family: sans-serif;
+  font-weight: 700;
+  color: white;
+  margin: auto 0;
+  vertical-align: middle;
+}
+
+.profileLink {
+  font-size: 16px;
+  font-family: sans-serif;
+  font-weight: 400;
+  color: #8E9192;
+  margin: auto 0;
+  vertical-align: middle;
+  text-decoration: none;
+}
