@@ -1,5 +1,5 @@
 import {
-	TweetAuthor,
+	TwitzyAuthor,
 	TwitzyAvatar,
 	TwitzyAvatarFallback,
 	TwitzyAvatarGradientFallback,
@@ -35,10 +35,10 @@ The first step is building an unstyled twitter thread component.`,
 					<TwitzyAvatar>
 						<TwitzyAvatarGradientFallback className={styles.avatar} size={45} />
 					</TwitzyAvatar>
-					<TweetAuthor.Root className={styles.authorContainer}>
-						<TweetAuthor.Name className={styles.authorName} />
-						<TweetAuthor.ProfileLink className={styles.profileLink} />
-					</TweetAuthor.Root>
+					<TwitzyAuthor.Root className={styles.authorContainer}>
+						<TwitzyAuthor.Name className={styles.authorName} />
+						<TwitzyAuthor.ProfileLink className={styles.profileLink} />
+					</TwitzyAuthor.Root>
 				</div>
 				<TwitzyTweetContent className={styles.twitzyTweetContent} />
 				<TwitzyTimeStamp className={styles.twitzyTimeStamp} />
