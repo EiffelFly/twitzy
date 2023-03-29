@@ -180,3 +180,31 @@ const TwitzyThreadTrigger = React.forwardRef<TwitzyThreadTriggerElement, TwitzyT
 );
 
 TwitzyThreadTrigger.displayName = "TwitzyThreadTrigger";
+
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyThreadFront
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyThreadFrontProps = React.HTMLAttributes<HTMLDivElement> & {
+	children: React.ReactNode;
+};
+
+type TwitzyThreadFrontElement = HTMLDivElement;
+
+const TwitzyThreadFront = React.forwardRef<TwitzyThreadFrontElement, TwitzyThreadFrontProps>(
+	(props, forwardedRef) => {
+		const { children, ...passThrough } = props;
+
+		return (
+			<TwitzyThreadProvider>
+				<div {...passThrough} ref={forwardedRef}>
+					{children}
+				</div>
+			</TwitzyThreadProvider>
+		);
+	}
+);
+
+TwitzyThreadFront.displayName = "TwitzyThreadFront";
+
+export { TwitzyThreads, TwitzyThread, TwitzyThreadTrigger, TwitzyThreadFront };
