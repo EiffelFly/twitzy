@@ -22,22 +22,6 @@ const useTwitzyThreadsContext = () => {
 	return context;
 };
 
-const TwitzyThreadsProvider = ({ children }: { children: React.ReactNode }) => {
-	const [openedThreads, setOpenThreads] = React.useState<string[]>([]);
-
-	const context: TwitzyThreadsContextValue = React.useMemo(
-		() => ({
-			openedThreads,
-			setOpenThreads: (threads: string[]) => {
-				setOpenThreads(threads);
-			},
-		}),
-		[openedThreads]
-	);
-
-	return <TwitzyThreadsContext.Provider value={context}>{children}</TwitzyThreadsContext.Provider>;
-};
-
 /* ------------------------------------------------------------------------------------------------
  * TwitzyThreads
  * ----------------------------------------------------------------------------------------------*/
@@ -52,12 +36,24 @@ const TwitzyThreads = React.forwardRef<TwitzyThreadsElement, TwitzyThreadsProps>
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
 
+		const [openedThreads, setOpenedThreads] = React.useState<string[]>([]);
+
+		const context: TwitzyThreadsContextValue = React.useMemo(
+			() => ({
+				openedThreads,
+				setOpenedThreads: (threads: string[]) => {
+					setOpenedThreads(threads);
+				},
+			}),
+			[openedThreads]
+		);
+
 		return (
-			<TwitzyThreadsProvider>
+			<TwitzyThreadsContext.Provider value={context}>
 				<div {...passThrough} ref={forwardedRef}>
 					{children}
 				</div>
-			</TwitzyThreadsProvider>
+			</TwitzyThreadsContext.Provider>
 		);
 	}
 );
@@ -85,22 +81,6 @@ const useTwitzyThreadContext = () => {
 	return context;
 };
 
-const TwitzyThreadProvider = ({ children }: { children: React.ReactNode }) => {
-	const [threadId, setThreadId] = React.useState<Nullable<string>>(null);
-
-	const context: TwitzyThreadContextValue = React.useMemo(
-		() => ({
-			threadId,
-			setThreadId: (id: Nullable<string>) => {
-				setThreadId(id);
-			},
-		}),
-		[threadId]
-	);
-
-	return <TwitzyThreadContext.Provider value={context}>{children}</TwitzyThreadContext.Provider>;
-};
-
 /* ------------------------------------------------------------------------------------------------
  * TwitzyThread
  * ----------------------------------------------------------------------------------------------*/
@@ -115,25 +95,24 @@ type TwitzyThreadElement = HTMLDivElement;
 const TwitzyThread = React.forwardRef<TwitzyThreadElement, TwitzyThreadProps>(
 	(props, forwardedRef) => {
 		const { children, id, ...passThrough } = props;
-		const threadsContext = useTwitzyThreadsContext();
-		const threadContext = useTwitzyThreadContext();
+		const [threadId, setThreadId] = React.useState<Nullable<string>>(id);
 
-		React.useEffect(() => {
-			if (threadContext.setThreadId) {
-				threadContext.setThreadId(id);
-			}
-		});
-
-		if (!threadsContext.openedThreads.includes(id)) {
-			return null;
-		}
+		const context: TwitzyThreadContextValue = React.useMemo(
+			() => ({
+				threadId,
+				setThreadId: (id: Nullable<string>) => {
+					setThreadId(id);
+				},
+			}),
+			[threadId]
+		);
 
 		return (
-			<TwitzyThreadProvider>
+			<TwitzyThreadContext.Provider value={context}>
 				<div {...passThrough} ref={forwardedRef}>
 					{children}
 				</div>
-			</TwitzyThreadProvider>
+			</TwitzyThreadContext.Provider>
 		);
 	}
 );
@@ -153,20 +132,17 @@ type TwitzyThreadTriggerElement = HTMLButtonElement;
 const TwitzyThreadTrigger = React.forwardRef<TwitzyThreadTriggerElement, TwitzyThreadTriggerProps>(
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
-		const threadsContext = useTwitzyThreadsContext();
-		const threadContext = useTwitzyThreadContext();
+		const { openedThreads, setOpenedThreads } = useTwitzyThreadsContext();
+		const { threadId, setThreadId } = useTwitzyThreadContext();
 
 		const handleClick = () => {
-			if (threadsContext.setOpenedThreads && threadContext.threadId) {
-				if (threadsContext.openedThreads.includes(threadContext.threadId)) {
-					threadsContext.setOpenedThreads(
-						threadsContext.openedThreads.filter((threadId) => threadId !== threadContext.threadId)
-					);
+			console.log(threadId, setOpenedThreads, setThreadId);
+			if (setOpenedThreads && threadId) {
+				console.log(setOpenedThreads);
+				if (openedThreads.includes(threadId)) {
+					setOpenedThreads(openedThreads.filter((id) => id !== threadId));
 				} else {
-					threadsContext.setOpenedThreads([
-						...threadsContext.openedThreads,
-						threadContext.threadId,
-					]);
+					setOpenedThreads([...openedThreads, threadId]);
 				}
 			}
 		};
@@ -182,29 +158,57 @@ const TwitzyThreadTrigger = React.forwardRef<TwitzyThreadTriggerElement, TwitzyT
 TwitzyThreadTrigger.displayName = "TwitzyThreadTrigger";
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyThreadFront
+ * TwitzyThreadHead
  * ----------------------------------------------------------------------------------------------*/
 
-type TwitzyThreadFrontProps = React.HTMLAttributes<HTMLDivElement> & {
+type TwitzyThreadHeadProps = React.HTMLAttributes<HTMLDivElement> & {
 	children: React.ReactNode;
 };
 
-type TwitzyThreadFrontElement = HTMLDivElement;
+type TwitzyThreadHeadElement = HTMLDivElement;
 
-const TwitzyThreadFront = React.forwardRef<TwitzyThreadFrontElement, TwitzyThreadFrontProps>(
+const TwitzyThreadHead = React.forwardRef<TwitzyThreadHeadElement, TwitzyThreadHeadProps>(
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
 
 		return (
-			<TwitzyThreadProvider>
-				<div {...passThrough} ref={forwardedRef}>
-					{children}
-				</div>
-			</TwitzyThreadProvider>
+			<div {...passThrough} ref={forwardedRef}>
+				{children}
+			</div>
 		);
 	}
 );
 
-TwitzyThreadFront.displayName = "TwitzyThreadFront";
+TwitzyThreadHead.displayName = "TwitzyThreadHead";
 
-export { TwitzyThreads, TwitzyThread, TwitzyThreadTrigger, TwitzyThreadFront };
+/* ------------------------------------------------------------------------------------------------
+ * TwitzyThreadTails
+ * ----------------------------------------------------------------------------------------------*/
+
+type TwitzyThreadTailsProps = React.HTMLAttributes<HTMLDivElement> & {
+	children: React.ReactNode;
+};
+
+type TwitzyThreadTailsElement = HTMLDivElement;
+
+const TwitzyThreadTails = React.forwardRef<TwitzyThreadTailsElement, TwitzyThreadTailsProps>(
+	(props, forwardedRef) => {
+		const { children, ...passThrough } = props;
+		const threadsContext = useTwitzyThreadsContext();
+		const threadContext = useTwitzyThreadContext();
+
+		if (!threadsContext.openedThreads.includes(threadContext.threadId || "")) {
+			return null;
+		}
+
+		return (
+			<div {...passThrough} ref={forwardedRef}>
+				{children}
+			</div>
+		);
+	}
+);
+
+TwitzyThreadTails.displayName = "TwitzyThreadTails";
+
+export { TwitzyThreads, TwitzyThread, TwitzyThreadTrigger, TwitzyThreadHead, TwitzyThreadTails };
