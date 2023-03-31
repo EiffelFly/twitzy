@@ -52,7 +52,7 @@ const Twitzy = (props: { children: React.ReactNode }) => {
  * TwitzyTweetProvider
  * ----------------------------------------------------------------------------------------------*/
 
-type Tweet = {
+export type TweetData = {
 	id: string;
 	author: string;
 	authorUrl: string;
@@ -62,8 +62,8 @@ type Tweet = {
 };
 
 type TwitzyTweetContextValue = {
-	tweet: Nullable<Tweet>;
-	setTweet?: (tweet: Nullable<Tweet>) => void;
+	tweet: Nullable<TweetData>;
+	setTweet?: (tweet: Nullable<TweetData>) => void;
 };
 
 const TwitzyTweetContext = React.createContext<TwitzyTweetContextValue>({
@@ -85,14 +85,14 @@ const TwitzyTweetProvider = ({
 	initialTweet,
 }: {
 	children: React.ReactNode;
-	initialTweet: Nullable<Tweet>;
+	initialTweet: Nullable<TweetData>;
 }) => {
-	const [tweet, setTweet] = React.useState<Nullable<Tweet>>(initialTweet);
+	const [tweet, setTweet] = React.useState<Nullable<TweetData>>(initialTweet);
 
 	const context: TwitzyTweetContextValue = React.useMemo(
 		() => ({
 			tweet,
-			setTweet: (tweet: Nullable<Tweet>) => {
+			setTweet: (tweet: Nullable<TweetData>) => {
 				setTweet(tweet);
 			},
 		}),
@@ -108,7 +108,7 @@ const TwitzyTweetProvider = ({
 
 type TwitzyTweetProps = React.HTMLAttributes<HTMLDivElement> & {
 	children: React.ReactNode;
-	tweet: Nullable<Tweet>;
+	tweet: Nullable<TweetData>;
 };
 
 type TwitzyTweetElement = HTMLDivElement;
@@ -734,6 +734,8 @@ const TwitzyOverview = {
 	Root: TwitzyTweetOverview,
 	Card: TwitzyTweetOverviewCard,
 };
+
+export * from "./thread";
 
 export {
 	Twitzy,
