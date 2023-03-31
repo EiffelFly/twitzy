@@ -10,14 +10,12 @@ type TwitzyThreadsContextValue = {
 	setOpenedThreads?: (threadsId: string[]) => void;
 };
 
-const TwitzyThreadsContext = React.createContext<TwitzyThreadsContextValue>({
-	openedThreads: [],
-});
+const TwitzyThreadsContext = React.createContext<Nullable<TwitzyThreadsContextValue>>(null);
 
-const useTwitzyThreadsContext = () => {
+const useTwitzyThreadsContext = (COMPONENT_NAME: string) => {
 	const context = React.useContext(TwitzyThreadsContext);
-	if (context === undefined) {
-		throw new Error("useTwitzy must be used within a TwitzyProvider");
+	if (!context) {
+		throw new Error(`${COMPONENT_NAME} must be used within a TwitzyThreads`);
 	}
 	return context;
 };
@@ -69,14 +67,12 @@ type TwitzyThreadContextValue = {
 	setThreadId?: (threadId: Nullable<string>) => void;
 };
 
-const TwitzyThreadContext = React.createContext<TwitzyThreadContextValue>({
-	threadId: null,
-});
+const TwitzyThreadContext = React.createContext<Nullable<TwitzyThreadContextValue>>(null);
 
-const useTwitzyThreadContext = () => {
+const useTwitzyThreadContext = (COMPONENT_NAME: string) => {
 	const context = React.useContext(TwitzyThreadContext);
-	if (context === undefined) {
-		throw new Error("useTwitzy must be used within a TwitzyProvider");
+	if (!context) {
+		throw new Error(`${COMPONENT_NAME} must be used within a TwitzyThread`);
 	}
 	return context;
 };
@@ -132,7 +128,7 @@ type TwitzyThreadTriggerElement = HTMLButtonElement;
 const TwitzyThreadTrigger = React.forwardRef<TwitzyThreadTriggerElement, TwitzyThreadTriggerProps>(
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
-		const { openedThreads, setOpenedThreads } = useTwitzyThreadsContext();
+		const { openedThreads, setOpenedThreads } = useTwitzyThreadsContext("TwitzyThreadTrigger");
 		const { threadId, setThreadId } = useTwitzyThreadContext();
 
 		const handleClick = () => {
@@ -194,8 +190,8 @@ type TwitzyThreadTailsElement = HTMLDivElement;
 const TwitzyThreadTails = React.forwardRef<TwitzyThreadTailsElement, TwitzyThreadTailsProps>(
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
-		const threadsContext = useTwitzyThreadsContext();
-		const threadContext = useTwitzyThreadContext();
+		const threadsContext = useTwitzyThreadsContext("TwitzyThreadTails");
+		const threadContext = useTwitzyThreadContext("TwitzyThreadTails");
 
 		if (!threadsContext.openedThreads.includes(threadContext.threadId || "")) {
 			return null;
