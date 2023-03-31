@@ -7,7 +7,7 @@ import {
 } from "twitzy";
 import { Root } from "../components/Root";
 import { Tweet } from "../components/Tweet";
-import styles from "./overview.module.css";
+import styles from "./threads.module.css";
 
 const Threads = () => {
 	const tweets = [
@@ -16,9 +16,7 @@ const Threads = () => {
 			authorUrl: "https://twitter.com/EiffelFly",
 			avatarSrc: "",
 			id: "1639857928508145665",
-			content: `Just like you have roughly four sections of working memory. The space for you to bring up creativity and create something new is limited. 
-
-In my observation, I roughly have three slots for me to fully use my creativity and it will change depend on the condition of my mental`,
+			content: `Just like you have roughly four sections of working memory. The space for you to bring up creativity and create something new is limited. \n\nIn my observation, I roughly have three slots for me to fully use my creativity and it will change depend on the condition of my mental`,
 			createdAt: "2023-03-20T02:46:14Z",
 		},
 		{
@@ -74,9 +72,7 @@ In my observation, I roughly have three slots for me to fully use my creativity 
 			authorUrl: "https://twitter.com/EiffelFly",
 			avatarSrc: "",
 			id: "1639862699030085632",
-			content: `2. Mind frame: Creativity Slot.
-
-			Just like I said, your creativity is not an unlimited resource. You can't jump between different ideas and dream about coming up with meaningful theory/action that is remarkable. Find your maximum creativity slots and arrange them carefully`,
+			content: `2. Mind frame: Creativity Slot. \n\nJust like I said, your creativity is not an unlimited resource. You can't jump between different ideas and dream about coming up with meaningful theory/action that is remarkable. Find your maximum creativity slots and arrange them carefully`,
 			createdAt: "2023-03-20T02:46:14Z",
 		},
 		{
@@ -84,9 +80,7 @@ In my observation, I roughly have three slots for me to fully use my creativity 
 			authorUrl: "https://twitter.com/EiffelFly",
 			avatarSrc: "",
 			id: "1639863733907521537",
-			content: `2.5 How to identify your creativity slots:
-
-			It's hard to give a detailed guideline besides experimenting with yourself. But I can confidently say, the process is a game about subtraction.`,
+			content: `2.5 How to identify your creativity slots: \n\nIt's hard to give a detailed guideline besides experimenting with yourself. But I can confidently say, the process is a game about subtraction.`,
 			createdAt: "2023-03-20T02:46:14Z",
 		},
 		{
@@ -94,9 +88,7 @@ In my observation, I roughly have three slots for me to fully use my creativity 
 			authorUrl: "https://twitter.com/EiffelFly",
 			avatarSrc: "",
 			id: "1639864465314426936",
-			content: `2.75
-
-			First, fill yourself with all the possibilities and then remove the stuff that you feel less passionate about. Put ideas on the libra, and test their weights and potential. Remove them to a point that you could confidently handle them in your daily workflow`,
+			content: `2.75 \n\nFirst, fill yourself with all the possibilities and then remove the stuff that you feel less passionate about. Put ideas on the libra, and test their weights and potential. Remove them to a point that you could confidently handle them in your daily workflow`,
 			createdAt: "2023-03-20T02:46:14Z",
 		},
 		{
@@ -104,11 +96,7 @@ In my observation, I roughly have three slots for me to fully use my creativity 
 			authorUrl: "https://twitter.com/EiffelFly",
 			avatarSrc: "",
 			id: "1639865146662346754",
-			content: `3. Bring the creation process to the public
-
-			Don't blindly create something in the dark, suddenly show it to the public and desire it will have the spotlight that it deserved. This is not a fairytale. 
-			
-			Show what you built, what problems you had encountered from the day one.`,
+			content: `3. Bring the creation process to the public \n\nDon't blindly create something in the dark, suddenly show it to the public and desire it will have the spotlight that it deserved. This is not a fairytale. \n\nShow what you built, what problems you had encountered from the day one.`,
 			createdAt: "2023-03-20T02:46:14Z",
 		},
 		{
@@ -116,9 +104,7 @@ In my observation, I roughly have three slots for me to fully use my creativity 
 			authorUrl: "https://twitter.com/EiffelFly",
 			avatarSrc: "",
 			id: "1639865526901161984",
-			content: `3.5 
-
-			Then you will be less lonely and much more motivated when you find someone is really looking forward to your creation. Believe me, that is one of the most fruitful feeling you can taste.`,
+			content: `3.5 \n\nThen you will be less lonely and much more motivated when you find someone is really looking forward to your creation. Believe me, that is one of the most fruitful feeling you can taste.`,
 			createdAt: "2023-03-20T02:46:14Z",
 		},
 		{
@@ -126,13 +112,7 @@ In my observation, I roughly have three slots for me to fully use my creativity 
 			authorUrl: "https://twitter.com/EiffelFly",
 			avatarSrc: "",
 			id: "1639865913334984704",
-			content: `In short:
-
-			1. Persistent is the key
-			2. Find your optimized creativity slots
-			3. Build and share with others from the ground zero
-			
-			That is it, the key ingredient of my creating process.`,
+			content: `In short: \n\n1. Persistent is the key \n2. Find your optimized creativity slots \n3. Build and share with others from the ground zero \n\nThat is it, the key ingredient of my creating process.`,
 			createdAt: "2023-03-20T02:46:14Z",
 		},
 	];
@@ -141,18 +121,18 @@ In my observation, I roughly have three slots for me to fully use my creativity 
 
 	return (
 		<Root className={styles.Root}>
-			<TwitzyThreads>
-				<TwitzyThread id="1637037962084122627">
-					hehehe
+			<TwitzyThreads className={styles.Threads}>
+				<TwitzyThread className={styles.Thread} id="1637037962084122627">
+					<TwitzyThreadTrigger>Open thread</TwitzyThreadTrigger>
 					<TwitzyThreadHead>
 						<Tweet tweet={tweetHead} />
 					</TwitzyThreadHead>
+
 					{tweetTails.map((tweet) => (
 						<TwitzyThreadTails key={tweet.id}>
 							<Tweet tweet={tweet} />
 						</TwitzyThreadTails>
 					))}
-					<TwitzyThreadTrigger>Open thread</TwitzyThreadTrigger>
 				</TwitzyThread>
 			</TwitzyThreads>
 		</Root>

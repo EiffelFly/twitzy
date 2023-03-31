@@ -100,7 +100,9 @@
   margin: auto 0;
   vertical-align: middle;
   margin-bottom: 32px;
-  white-space: pre;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 150%;
 }
 
 .horizontalLine {

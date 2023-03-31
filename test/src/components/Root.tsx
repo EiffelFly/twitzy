@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes } from "react";
 
 export const Root = ({
 	children,
@@ -8,11 +8,9 @@ export const Root = ({
 		<div
 			{...passThrough}
 			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				alignItems: 'center',
-				justifyContent: 'center',
-				height: '100vh',
+				display: "flex",
+				flexDirection: "column",
+				minHeight: "100vh",
 				...passThrough.style,
 			}}
 		>
