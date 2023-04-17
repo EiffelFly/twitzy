@@ -1,6 +1,5 @@
 import { Root } from "../components/Root";
-import { Tweet } from "../components/Tweet";
-import styles from "./tweet.module.css";
+import { TweetBase } from "../components/Tweet";
 
 const TweetPage = () => {
 	return (
@@ -9,7 +8,7 @@ const TweetPage = () => {
 				backgroundColor: "#191C1D",
 			}}
 		>
-			<Tweet
+			<TweetBase
 				tweet={{
 					author: "EiffelFly",
 					authorUrl: "https://twitter.com/EiffelFly",

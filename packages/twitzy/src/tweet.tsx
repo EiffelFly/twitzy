@@ -40,15 +40,6 @@ const TwitzyProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 /* ------------------------------------------------------------------------------------------------
- * Twitzy
- * ----------------------------------------------------------------------------------------------*/
-
-const Twitzy = (props: { children: React.ReactNode }) => {
-	const { children } = props;
-	return <TwitzyProvider>{children}</TwitzyProvider>;
-};
-
-/* ------------------------------------------------------------------------------------------------
  * TwitzyTweetProvider
  * ----------------------------------------------------------------------------------------------*/
 
@@ -724,33 +715,27 @@ const TwitzyTweetOverviewCard = React.forwardRef<
 
 TwitzyTweetOverviewCard.displayName = "TwitzyTweetOverviewCard";
 
-const TwitzyAuthor = {
-	Root: TwitzyTweetAuthor,
-	Name: TwitzyTweetAuthorName,
-	ProfileLink: TwitzyTweetAuthorProfileLink,
-};
-
-const TwitzyOverview = {
+const TwitzyOverviewComposition = {
 	Root: TwitzyTweetOverview,
 	Card: TwitzyTweetOverviewCard,
 };
 
-export * from "./thread";
-
-export {
-	Twitzy,
-	TwitzyAvatar,
-	TwitzyAvatarImage,
-	TwitzyAvatarFallback,
-	TwitzyAvatarGradientFallback,
-	TwitzyTimeStamp,
-	TwitzyToolbar,
-	TwitzyLike,
-	TwitzyReply,
-	TwitzyRetweet,
-	TwitzyCopyLink,
-	TwitzyTweet,
-	TwitzyTweetContent,
-	TwitzyAuthor,
-	TwitzyOverview,
+const TwitzyTweetComposition = {
+	Root: TwitzyTweet,
+	Avatar: TwitzyAvatar,
+	AvatarImage: TwitzyAvatarImage,
+	AvatarFallback: TwitzyAvatarFallback,
+	AvatarGradientFallback: TwitzyAvatarGradientFallback,
+	TimeStamp: TwitzyTimeStamp,
+	Toolbar: TwitzyToolbar,
+	Like: TwitzyLike,
+	Reply: TwitzyReply,
+	Retweet: TwitzyRetweet,
+	CopyLink: TwitzyCopyLink,
+	Content: TwitzyTweetContent,
+	Author: TwitzyTweetAuthor,
+	AuthorName: TwitzyTweetAuthorName,
+	AuthorProfileLink: TwitzyTweetAuthorProfileLink,
 };
+
+export { TwitzyTweetComposition as Tweet, TwitzyOverviewComposition as Overview };

@@ -1,15 +1,9 @@
-import {
-	TwitzyThread,
-	TwitzyThreadHead,
-	TwitzyThreads,
-	TwitzyThreadTails,
-	TwitzyThreadTrigger,
-} from "twitzy";
+import { Thread, Threads } from "twitzy";
 import { Root } from "../components/Root";
-import { Tweet } from "../components/Tweet";
+import { TweetBase } from "../components/Tweet";
 import styles from "./threads.module.css";
 
-const Threads = () => {
+const ThreadsPage = () => {
 	const tweets = [
 		{
 			author: "EiffelFly",
@@ -121,22 +115,22 @@ const Threads = () => {
 
 	return (
 		<Root className={styles.Root}>
-			<TwitzyThreads className={styles.Threads}>
-				<TwitzyThread className={styles.Thread} id="1637037962084122627">
-					<TwitzyThreadTrigger>Open thread</TwitzyThreadTrigger>
-					<TwitzyThreadHead>
-						<Tweet tweet={tweetHead} />
-					</TwitzyThreadHead>
+			<Threads className={styles.Threads}>
+				<Thread.Root className={styles.Thread} id="1637037962084122627">
+					<Thread.Trigger>Open thread</Thread.Trigger>
+					<Thread.Head>
+						<TweetBase tweet={tweetHead} />
+					</Thread.Head>
 
 					{tweetTails.map((tweet) => (
-						<TwitzyThreadTails key={tweet.id}>
-							<Tweet tweet={tweet} />
-						</TwitzyThreadTails>
+						<Thread.Tails key={tweet.id}>
+							<TweetBase tweet={tweet} />
+						</Thread.Tails>
 					))}
-				</TwitzyThread>
-			</TwitzyThreads>
+				</Thread.Root>
+			</Threads>
 		</Root>
 	);
 };
 
-export default Threads;
+export default ThreadsPage;

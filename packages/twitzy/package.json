@@ -25,8 +25,8 @@
     "tinycolor2": "^1.6.0"
   },
   "scripts": {
-    "dev": "pnpm rimraf dist && tsup src/index.tsx --watch",
+    "dev": "pnpm rimraf dist && tsup src/index.ts --watch",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx --cache",
-    "build": "pnpm rimraf dist && tsup src/index.tsx"
+    "build": "pnpm rimraf dist && tsup src/index.ts"
   }
 }

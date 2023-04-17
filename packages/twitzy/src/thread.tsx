@@ -129,12 +129,10 @@ const TwitzyThreadTrigger = React.forwardRef<TwitzyThreadTriggerElement, TwitzyT
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
 		const { openedThreads, setOpenedThreads } = useTwitzyThreadsContext("TwitzyThreadTrigger");
-		const { threadId, setThreadId } = useTwitzyThreadContext();
+		const { threadId, setThreadId } = useTwitzyThreadContext("TwitzyThreadTrigger");
 
 		const handleClick = () => {
-			console.log(threadId, setOpenedThreads, setThreadId);
 			if (setOpenedThreads && threadId) {
-				console.log(setOpenedThreads);
 				if (openedThreads.includes(threadId)) {
 					setOpenedThreads(openedThreads.filter((id) => id !== threadId));
 				} else {
@@ -207,4 +205,13 @@ const TwitzyThreadTails = React.forwardRef<TwitzyThreadTailsElement, TwitzyThrea
 
 TwitzyThreadTails.displayName = "TwitzyThreadTails";
 
-export { TwitzyThreads, TwitzyThread, TwitzyThreadTrigger, TwitzyThreadHead, TwitzyThreadTails };
+export { TwitzyThreads as Threads };
+
+const TwitzyThreadComposition = {
+	Root: TwitzyThread,
+	Trigger: TwitzyThreadTrigger,
+	Head: TwitzyThreadHead,
+	Tails: TwitzyThreadTails,
+};
+
+export { TwitzyThreadComposition as Thread };

@@ -1,8 +1,8 @@
-import { TwitzyOverview } from "twitzy";
+import { Overview } from "twitzy";
 import { Root } from "../components/Root";
 import styles from "./overview.module.css";
 
-const Overview = () => {
+const OverviewPage = () => {
 	const tweets = [
 		{
 			author: "EiffelFly",
@@ -18,13 +18,13 @@ const Overview = () => {
 
 	return (
 		<Root className={styles.Root}>
-			<TwitzyOverview.Root>
+			<Overview.Root>
 				{tweets.map((tweet) => (
-					<TwitzyOverview.Card>{tweet.author}</TwitzyOverview.Card>
+					<Overview.Card>{tweet.author}</Overview.Card>
 				))}
-			</TwitzyOverview.Root>
+			</Overview.Root>
 		</Root>
 	);
 };
 
-export default Overview;
+export default OverviewPage;
