@@ -121,12 +121,11 @@ const ThreadsPage = () => {
 					<Thread.Head>
 						<TweetBase tweet={tweetHead} />
 					</Thread.Head>
-
-					{tweetTails.map((tweet) => (
-						<Thread.Tails key={tweet.id}>
-							<TweetBase tweet={tweet} />
-						</Thread.Tails>
-					))}
+					<Thread.Tails className={styles.ThreadTails}>
+						{tweetTails.map((tweet) => (
+							<TweetBase key={tweet.id} tweet={tweet} />
+						))}
+					</Thread.Tails>
 				</Thread.Root>
 			</Threads>
 		</Root>
