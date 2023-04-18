@@ -2,69 +2,12 @@ import * as React from "react";
 import { Nullable } from "./type";
 
 /* ------------------------------------------------------------------------------------------------
- * TwitzyThreadsProvider
- * ----------------------------------------------------------------------------------------------*/
-
-type TwitzyThreadsContextValue = {
-	openedThreads: string[];
-	setOpenedThreads?: (threadsId: string[]) => void;
-};
-
-const TwitzyThreadsContext = React.createContext<Nullable<TwitzyThreadsContextValue>>(null);
-
-const useTwitzyThreadsContext = (COMPONENT_NAME: string) => {
-	const context = React.useContext(TwitzyThreadsContext);
-	if (!context) {
-		throw new Error(`${COMPONENT_NAME} must be used within a TwitzyThreads`);
-	}
-	return context;
-};
-
-/* ------------------------------------------------------------------------------------------------
- * TwitzyThreads
- * ----------------------------------------------------------------------------------------------*/
-
-type TwitzyThreadsProps = React.HTMLAttributes<HTMLDivElement> & {
-	children: React.ReactNode;
-};
-
-type TwitzyThreadsElement = HTMLDivElement;
-
-const TwitzyThreads = React.forwardRef<TwitzyThreadsElement, TwitzyThreadsProps>(
-	(props, forwardedRef) => {
-		const { children, ...passThrough } = props;
-
-		const [openedThreads, setOpenedThreads] = React.useState<string[]>([]);
-
-		const context: TwitzyThreadsContextValue = React.useMemo(
-			() => ({
-				openedThreads,
-				setOpenedThreads: (threads: string[]) => {
-					setOpenedThreads(threads);
-				},
-			}),
-			[openedThreads]
-		);
-
-		return (
-			<TwitzyThreadsContext.Provider value={context}>
-				<div {...passThrough} ref={forwardedRef}>
-					{children}
-				</div>
-			</TwitzyThreadsContext.Provider>
-		);
-	}
-);
-
-TwitzyThreads.displayName = "TwitzyThreads";
-
-/* ------------------------------------------------------------------------------------------------
  * TwitzyThreadProvider
  * ----------------------------------------------------------------------------------------------*/
 
 type TwitzyThreadContextValue = {
-	threadId: Nullable<string>;
-	setThreadId?: (threadId: Nullable<string>) => void;
+	threadIsOpen: boolean;
+	setThreadIsOpen?: (open: boolean) => void;
 };
 
 const TwitzyThreadContext = React.createContext<Nullable<TwitzyThreadContextValue>>(null);
@@ -83,24 +26,29 @@ const useTwitzyThreadContext = (COMPONENT_NAME: string) => {
 
 type TwitzyThreadProps = React.HTMLAttributes<HTMLDivElement> & {
 	children: React.ReactNode;
-	id: string;
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
 };
 
 type TwitzyThreadElement = HTMLDivElement;
 
 const TwitzyThread = React.forwardRef<TwitzyThreadElement, TwitzyThreadProps>(
 	(props, forwardedRef) => {
-		const { children, id, ...passThrough } = props;
-		const [threadId, setThreadId] = React.useState<Nullable<string>>(id);
+		const { children, open, onOpenChange, ...passThrough } = props;
+		const [threadIsOpen, setThreadIsOpen] = React.useState<boolean>(false);
 
 		const context: TwitzyThreadContextValue = React.useMemo(
 			() => ({
-				threadId,
-				setThreadId: (id: Nullable<string>) => {
-					setThreadId(id);
+				threadIsOpen: open ? open : threadIsOpen,
+				setThreadIsOpen: (open: boolean) => {
+					if (onOpenChange) {
+						onOpenChange(open);
+					} else {
+						setThreadIsOpen(open);
+					}
 				},
 			}),
-			[threadId]
+			[threadIsOpen, onOpenChange, open]
 		);
 
 		return (
@@ -128,16 +76,11 @@ type TwitzyThreadTriggerElement = HTMLButtonElement;
 const TwitzyThreadTrigger = React.forwardRef<TwitzyThreadTriggerElement, TwitzyThreadTriggerProps>(
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
-		const { openedThreads, setOpenedThreads } = useTwitzyThreadsContext("TwitzyThreadTrigger");
-		const { threadId, setThreadId } = useTwitzyThreadContext("TwitzyThreadTrigger");
+		const { setThreadIsOpen, threadIsOpen } = useTwitzyThreadContext("TwitzyThreadTrigger");
 
 		const handleClick = () => {
-			if (setOpenedThreads && threadId) {
-				if (openedThreads.includes(threadId)) {
-					setOpenedThreads(openedThreads.filter((id) => id !== threadId));
-				} else {
-					setOpenedThreads([...openedThreads, threadId]);
-				}
+			if (setThreadIsOpen) {
+				setThreadIsOpen(!threadIsOpen);
 			}
 		};
 
@@ -188,10 +131,9 @@ type TwitzyThreadTailsElement = HTMLDivElement;
 const TwitzyThreadTails = React.forwardRef<TwitzyThreadTailsElement, TwitzyThreadTailsProps>(
 	(props, forwardedRef) => {
 		const { children, ...passThrough } = props;
-		const threadsContext = useTwitzyThreadsContext("TwitzyThreadTails");
 		const threadContext = useTwitzyThreadContext("TwitzyThreadTails");
 
-		if (!threadsContext.openedThreads.includes(threadContext.threadId || "")) {
+		if (!threadContext.threadIsOpen) {
 			return null;
 		}
 
@@ -204,8 +146,6 @@ const TwitzyThreadTails = React.forwardRef<TwitzyThreadTailsElement, TwitzyThrea
 );
 
 TwitzyThreadTails.displayName = "TwitzyThreadTails";
-
-export { TwitzyThreads as Threads };
 
 const TwitzyThreadComposition = {
 	Root: TwitzyThread,

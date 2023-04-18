@@ -1,7 +1,8 @@
-import { Thread, Threads } from "twitzy";
+import { Thread } from "twitzy";
 import { Root } from "../components/Root";
 import { TweetBase } from "../components/Tweet";
 import styles from "./threads.module.css";
+import { useState } from "react";
 
 const ThreadsPage = () => {
 	const tweets = [
@@ -113,21 +114,21 @@ const ThreadsPage = () => {
 
 	const [tweetHead, ...tweetTails] = tweets;
 
+	const [threadIsOpen, setThreadIsOpen] = useState(false);
+
 	return (
 		<Root className={styles.Root}>
-			<Threads className={styles.Threads}>
-				<Thread.Root className={styles.Thread} id="1637037962084122627">
-					<Thread.Trigger>Open thread</Thread.Trigger>
-					<Thread.Head>
-						<TweetBase tweet={tweetHead} />
-					</Thread.Head>
-					<Thread.Tails className={styles.ThreadTails}>
-						{tweetTails.map((tweet) => (
-							<TweetBase key={tweet.id} tweet={tweet} />
-						))}
-					</Thread.Tails>
-				</Thread.Root>
-			</Threads>
+			<Thread.Root className={styles.Thread} open={threadIsOpen} onOpenChange={setThreadIsOpen}>
+				<Thread.Trigger>Open thread</Thread.Trigger>
+				<Thread.Head>
+					<TweetBase tweet={tweetHead} />
+				</Thread.Head>
+				<Thread.Tails className={styles.ThreadTails}>
+					{tweetTails.map((tweet) => (
+						<TweetBase key={tweet.id} tweet={tweet} />
+					))}
+				</Thread.Tails>
+			</Thread.Root>
 		</Root>
 	);
 };
