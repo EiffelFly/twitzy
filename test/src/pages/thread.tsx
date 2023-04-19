@@ -1,7 +1,7 @@
 import { Thread } from "twitzy";
 import { Root } from "../components/Root";
 import { TweetBase } from "../components/Tweet";
-import styles from "./threads.module.css";
+import styles from "./thread.module.css";
 import { useState } from "react";
 
 const ThreadsPage = () => {
