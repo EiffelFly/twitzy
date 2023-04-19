@@ -1,0 +1,53 @@
+.Root {
+  background-color: #191C1D;
+}
+
+.DialogTrigger {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 200px;
+  height: 200px
+}
+
+.DialogOverlay {
+  background-color: #111827;
+  border-radius: 6px;
+  box-shadow: hsl(206 22% 7% / 35%) 0px 10px 38px -10px, hsl(206 22% 7% / 20%) 0px 10px 20px -15px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 600px;
+  max-height: 500px;
+  padding: 25px;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+}
+
+.DialogContent {
+  width: 100%;
+}
+
+.DialogContent:focus {
+  outline: none;
+}
+
+.Thread {
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+  padding: 60px 0;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ThreadTails {
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+}
